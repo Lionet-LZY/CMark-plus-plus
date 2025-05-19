@@ -119,7 +119,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Html_Renderer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Markdown_BlockElement.cpp" />
+    <ClCompile Include="Markdown_InlineElement.cpp" />
+    <ClCompile Include="Markdown_Parser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Html_Renderer.h" />
+    <ClInclude Include="Markdown_BlockElement.h" />
+    <ClInclude Include="Markdown_InlineElement.h" />
+    <ClInclude Include="Markdown_Parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
