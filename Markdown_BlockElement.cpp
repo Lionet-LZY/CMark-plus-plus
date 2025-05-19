@@ -6,3 +6,6 @@ Markdown_BlockElement::Markdown_BlockElement(BlockType T, const std::string& t) 
 BlockType Markdown_BlockElement::getType()const {
 	return type;
 }
+const std::string& Markdown_BlockElement::getText()const {
+	return text;
+}
