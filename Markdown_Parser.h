@@ -1,4 +1,4 @@
-// Markdown_Parser.h：语法解析
+// Markdown_Parser.h：语法解析定义
 
 #pragma once
 #include <string>
@@ -7,6 +7,8 @@
 #include "Markdown_InlineElement.h"
 
 class Markdown_Parser {
+private:
+	std::vector<std::vector<std::string>> RawBlock;
 public:
-	std::vector<Markdown_BlockElement> parse(const std::string md_text);
+	void split(const std::string& RawText);
 };
