@@ -1,8 +1,9 @@
-// 块元素 Markdown 语法
+// Markdown_BlockElement.h：块元素语法定义
 
 #pragma once
 #include <string>
-//枚举语法类型
+
+// 枚举语法类型
 enum class BlockType {
 	Paragraph,
 	Headinglevel1,
@@ -10,6 +11,7 @@ enum class BlockType {
 	Headinglevel3,
 	HorizontalRules
 };
+
 class Markdown_BlockElement {
 private:
 	BlockType type;

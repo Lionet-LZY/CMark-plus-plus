@@ -1,12 +1,15 @@
-//行元素 Markdown 语法定义
+// Markdown_InlineElement.h：行内元素语法定义
+
 #pragma once
 #include <string>
+
 enum class InlineType {
 	Bold,
 	Italic,
 	BoldItalic,
 	EscapingBackticks
 };
+
 class Markdown_InlineElement {
 private:
 	InlineType type;

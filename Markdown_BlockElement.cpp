@@ -1,4 +1,4 @@
-//块元素 Markdown 语法实现
+// Markdown_BlockElement.cpp：块元素语法实现
 
 #include"Markdown_BlockElement.h"
 
