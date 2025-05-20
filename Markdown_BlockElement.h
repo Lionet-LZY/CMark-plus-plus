@@ -9,7 +9,11 @@ enum class BlockType {
 	Headinglevel1,
 	Headinglevel2,
 	Headinglevel3,
-	HorizontalRules
+	HorizontalRules,
+	CodeBlocks,
+	BlockQuote,
+	OrderedList,
+	UnorderedList
 };
 
 class Markdown_BlockElement {
