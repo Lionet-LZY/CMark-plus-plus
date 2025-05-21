@@ -78,7 +78,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 		}
 		// 空行 & 分割线
 		else if (curr == "") {
-			if (*next == "---") {
+			if (next && *next == "---") {
 				BlockText.push_back(curr);
 				BlockText.push_back(*next);
 				RawBlock.push_back(BlockText);
@@ -87,7 +87,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			}
 			else {
 				BlockText.push_back(curr);
-				if (*next != "") {
+				if (next && *next != "") {
 					RawBlock.push_back(BlockText);
 					BlockText.clear();
 				}
@@ -97,8 +97,10 @@ void Markdown_Parser::split(const std::string& RawText) {
 		// 正文
 		else {
 			BlockText.push_back(curr);
-			if (*next == "") {
-				BlockText.push_back(*next);
+			if (next == nullptr || *next == "") {
+				if (next) {
+					BlockText.push_back(*next);
+				}
 				RawBlock.push_back(BlockText);
 				BlockText.clear();
 				ins += 2; continue;
