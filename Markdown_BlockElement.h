@@ -2,6 +2,8 @@
 
 #pragma once
 #include <string>
+#include <vector>
+#include "Markdown_InlineElement.h"
 
 // 枚举语法类型
 enum class BlockType {
@@ -20,8 +22,9 @@ class Markdown_BlockElement {
 private:
 	BlockType type;
 	std::string text;
+	std::vector<Markdown_InlineElement> InlineElement;
 public:
-	Markdown_BlockElement(BlockType T, const std::string& t);
-	BlockType getType()const;
-	const std::string& getText()const;
+	Markdown_BlockElement(BlockType T, const std::string& t, std::vector<Markdown_InlineElement> InlElem);
+	BlockType getType() const;
+	const std::string& getText() const;
 };

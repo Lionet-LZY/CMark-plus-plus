@@ -2,6 +2,8 @@
 
 #include "Markdown_Parser.h"
 #include <sstream>
+#include <regex>
+#include "Markdown_InlineElement.h"
 
 void Markdown_Parser::split(const std::string& RawText) {
 	RawBlock.clear();
@@ -105,4 +107,56 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++; continue;
 		}
 	}
+}
+
+std::vector<Markdown_InlineElement> Markdown_Parser::inline_parse(const std::string& RawText, std::string& ResText, size_t begin_ins, size_t end_ins) {
+	std::string BufText;
+	std::vector<Markdown_InlineElement> ResElem;
+	std::vector<std::tuple<size_t, size_t, std::string>> TextSegments;
+	ResText = "";
+	size_t ins = begin_ins;
+	size_t space_count = 0;
+	while (ins <= end_ins) {
+		if (RawText[ins] == ' ') {
+			space_count++;
+			if (space_count <= 2) { BufText += RawText[ins]; }
+		}
+		else { space_count = 0; BufText += RawText[ins]; }
+		ins++;
+	}
+	std::vector<std::pair<InlineType, std::regex>> patterns = {
+		{InlineType::BoldItalic, std::regex(R"(\*\*\*(.+?)\*\*\*)")},
+		{InlineType::Bold,       std::regex(R"(\*\*(.+?)\*\*)")},
+		{InlineType::Italic,     std::regex(R"(\*(?!\*)(.+?)\*)")},
+		{InlineType::Code,       std::regex(R"(`(.+?)`)")}
+	};
+	for (const auto& [type, pattern] : patterns) {
+		for (auto buf = std::sregex_iterator(BufText.begin(), BufText.end(), pattern); buf != std::sregex_iterator(); buf++) {
+			std::smatch match = *buf;
+			ResElem.push_back(Markdown_InlineElement(type, 
+												     static_cast<size_t>(match.position()), 
+													 static_cast<size_t>(match.position() + match.length() - 1)));
+			TextSegments.push_back({ static_cast<size_t>(match.position()),
+									 static_cast<size_t>(match.position() + match.length() - 1),
+									 match[1].str() });
+		}
+	}
+	std::sort(TextSegments.begin(), TextSegments.end(), [](const auto& a, const auto& b) {
+		return std::get<0>(a) < std::get<0>(b);
+	});
+	std::sort(ResElem.begin(), ResElem.end(), [](const Markdown_InlineElement& a, const Markdown_InlineElement& b) {
+		return a.getBegin() < b.getBegin();
+	});
+	size_t curr = 0;
+	for (const auto& [start, end, inner] : TextSegments) {
+		if (start > curr) {
+			ResText += BufText.substr(curr, start - curr);
+		}
+		ResText += inner;
+		curr = end;
+	}
+	if (curr < BufText.size()) {
+		ResText += BufText.substr(curr);
+	}
+	return ResElem;
 }

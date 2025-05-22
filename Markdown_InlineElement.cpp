@@ -2,10 +2,11 @@
 
 #include"Markdown_InlineElement.h"
 
-Markdown_InlineElement::Markdown_InlineElement(InlineType T,const std::string& t):type(T),text(t){}
-InlineType Markdown_InlineElement::getType()const {
+Markdown_InlineElement::Markdown_InlineElement(InlineType T, size_t b, size_t e)
+	: type(T), begin(b), end(e) {}
+InlineType Markdown_InlineElement::getType() const {
 	return type;
 }
-const std::string& Markdown_InlineElement::getText()const {
-	return text;
+size_t Markdown_InlineElement::getBegin() const { 
+	return begin; 
 }

@@ -7,15 +7,16 @@ enum class InlineType {
 	Bold,
 	Italic,
 	BoldItalic,
-	EscapingBackticks
+	Code
 };
 
 class Markdown_InlineElement {
 private:
 	InlineType type;
-	std::string text;
+	size_t begin;
+	size_t end;
 public:
-	Markdown_InlineElement(InlineType T, const std::string& t);
-	InlineType getType()const;
-	const std::string& getText()const;
+	Markdown_InlineElement(InlineType T, size_t b, size_t e);
+	InlineType getType() const;
+	size_t getBegin() const;
 };

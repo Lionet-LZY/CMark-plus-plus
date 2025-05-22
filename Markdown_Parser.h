@@ -11,4 +11,5 @@ private:
 	std::vector<std::vector<std::string>> RawBlock;
 public:
 	void split(const std::string& RawText);
+	std::vector<Markdown_InlineElement> inline_parse(const std::string& RawText, std::string& ResText, size_t begin_ins, size_t end_ins);
 };
