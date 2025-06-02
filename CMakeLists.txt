@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.16)
+project(CMark++)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(PROJECT_SOURCE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+)
+
+find_package(Qt6 COMPONENTS Widgets)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets)
