@@ -1,4 +1,4 @@
-// Markdown_Parser.h£ºÓï·¨½âÎö¶¨Òå
+ï»¿// Markdown_Parser.hï¼šè¯­æ³•è§£æå®šä¹‰
 
 #pragma once
 #include <string>
@@ -10,6 +10,6 @@ class Markdown_Parser {
 public:
 	std::vector<std::vector<std::string>> RawBlock;
 	void split(const std::string& RawText);
-	std::vector<Markdown_InlineElement> inline_parse(const std::string& RawText, std::string& ResText, size_t begin_ins, size_t end_ins);
+	std::vector<Markdown_InlineElement> inline_parse(const std::string& RawText, std::string& ResText);
 	// std::vector<Markdown_BlockElement> block_parse();
 };

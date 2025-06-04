@@ -1,4 +1,4 @@
-//´òÈëhtml±êÇ©¶¨Òå
+ï»¿//æ‰“å…¥htmlæ ‡ç­¾å®šä¹‰
 #pragma once
 
 #include <string>
@@ -8,8 +8,8 @@ class html {
 private:
 	std::string htext;
 public:
-	//Îª¿éÔªËØÓï·¨²¿·Ö´òÈëhtml±êÇ©
+	//ä¸ºå—å…ƒç´ è¯­æ³•éƒ¨åˆ†æ‰“å…¥htmlæ ‡ç­¾
 	void input_htext(Markdown_BlockElement a);
-	//ÅĞ¶Ï´úÂëÓïÑÔÀàĞÍ
+	//åˆ¤æ–­ä»£ç è¯­è¨€ç±»å‹
 	std::string codetype(Markdown_BlockElement a);
 };

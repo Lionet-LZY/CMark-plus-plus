@@ -27,3 +27,5 @@ set(PROJECT_SOURCE_DIR
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/EHsc")

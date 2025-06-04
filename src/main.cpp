@@ -1,4 +1,4 @@
-/*#include <QApplication>
+﻿/*#include <QApplication>
 #include <QWidget>
 
 int main(int argc, char *argv[])
@@ -17,10 +17,11 @@ int main(int argc, char *argv[])
 #include <string>
 #include <filesystem>
 #include "Markdown_Parser.h"
+#include "Markdown_InlineElement.h"
 
 int main()
 {
-    std::ifstream file("resources/test.md");
+    /*std::ifstream file("resources/test.md");
     if (!file.is_open()) {
         std::cerr << "Failed to open: resources/test.md" << std::endl;
         return 1;
@@ -35,5 +36,22 @@ int main()
         for (int j = 0; j < parser.RawBlock[i].size(); j++) {
             std::cout << "\tLine " << j << '\t' << parser.RawBlock[i][j] << '\n';
         }
+    }*/
+    Markdown_Parser parser;
+    std::string raw = "  **bold**,      *Ita   lic* and `code`.";
+    std::string resultText;
+
+    auto elems = parser.inline_parse(raw, resultText);
+
+    std::cout << "Result Text: " << resultText << "\n";
+    std::cout << "Inline Elements:\n";
+    for (const auto& elem : elems) {
+        std::string type_str;
+        switch (elem.getType()) {
+        case InlineType::Bold:       type_str = "Bold"; break;
+        case InlineType::Italic:     type_str = "Italic"; break;
+        case InlineType::Code:       type_str = "Code"; break;
+        }
+        std::cout << type_str << " [" << elem.getBegin() << ", " << elem.getEnd() << "]\n";
     }
 }

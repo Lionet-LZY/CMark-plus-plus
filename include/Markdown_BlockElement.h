@@ -1,11 +1,11 @@
-// Markdown_BlockElement.h£º¿éÔªËØÓï·¨¶¨Òå
+ï»¿// Markdown_BlockElement.hï¼šå—å…ƒç´ è¯­æ³•å®šä¹‰
 
 #pragma once
 #include <string>
 #include <vector>
 #include "Markdown_InlineElement.h"
 
-// Ã¶¾ÙÓï·¨ÀàĞÍ
+// æšä¸¾è¯­æ³•ç±»å‹
 enum class BlockType {
 	Paragraph,
 	Headinglevel1,

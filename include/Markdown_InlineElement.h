@@ -1,4 +1,4 @@
-// Markdown_InlineElement.h£ºÐÐÄÚÔªËØÓï·¨¶¨Òå
+ï»¿// Markdown_InlineElement.hï¼šè¡Œå†…å…ƒç´ è¯­æ³•å®šä¹‰
 
 #pragma once
 #include <string>
@@ -6,7 +6,6 @@
 enum class InlineType {
 	Bold,
 	Italic,
-	BoldItalic,
 	Code
 };
 
@@ -19,4 +18,5 @@ public:
 	Markdown_InlineElement(InlineType T, size_t b, size_t e);
 	InlineType getType() const;
 	size_t getBegin() const;
+	size_t getEnd() const;
 };

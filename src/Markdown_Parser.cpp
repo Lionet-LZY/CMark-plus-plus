@@ -1,9 +1,10 @@
-// Markdown_Parser.cpp£∫”Ô∑®Ω‚Œˆ µœ÷
+Ôªø// Markdown_Parser.cppÔºöËØ≠Ê≥ïËß£ÊûêÂÆûÁé∞
 
 #include "Markdown_Parser.h"
 #include <sstream>
 #include <regex>
 #include <iostream>
+#include <vector>
 #include "Markdown_InlineElement.h"
 
 void Markdown_Parser::split(const std::string& RawText) {
@@ -32,7 +33,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++;
 			continue;
 		}
-		// ¥˙¬ÎøÈ
+		// ‰ª£Á†ÅÂùó
 		if (curr.rfind("```", 0) == 0 || Code_flag) {
 			if (curr.rfind("```", 0) == 0 && !Code_flag) {
 				if (!BlockText.empty()) {
@@ -52,7 +53,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			continue;
 		}
 
-		// ”––Ú¡–±Ì
+		// ÊúâÂ∫èÂàóË°®
 		if (curr.size() >= 3 && std::isdigit(curr[0]) && curr[1] == '.' && curr[2] == ' ') {
 			if (!OrderedLists_flag) {
 				if (!BlockText.empty()) {
@@ -66,7 +67,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++;
 			continue;
 		}
-		// Œﬁ–Ú¡–±Ì
+		// Êó†Â∫èÂàóË°®
 		if (curr.size() >= 2 && curr[0] == '-' && curr[1] == ' ') {
 			if (!UnorderedList_flag) {
 				if (!BlockText.empty()) {
@@ -80,7 +81,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++;
 			continue;
 		}
-		// “˝”√
+		// ÂºïÁî®
 		if (curr.size() >= 2 && curr[0] == '>' && curr[1] == ' ') {
 			if (!BlockQuote_flag) {
 				if (!BlockText.empty()) {
@@ -94,7 +95,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++;
 			continue;
 		}
-		// ±ÍÃ‚
+		// Ê†áÈ¢ò
 		if ((curr.size() >= 2 && curr[0] == '#' && curr[1] == ' ') ||
 			(curr.size() >= 3 && curr[0] == '#' && curr[1] == '#' && curr[2] == ' ') ||
 			(curr.size() >= 4 && curr[0] == '#' && curr[1] == '#' && curr[2] == '#' && curr[3] == ' ')) {
@@ -108,7 +109,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++;
 			continue;
 		}
-		// ∑÷∏Óœﬂ
+		// ÂàÜÂâ≤Á∫ø
 		if (curr == "---" && prev && prev->empty()) {
 			if (!BlockText.empty()) {
 				RawBlock.push_back(BlockText);
@@ -120,7 +121,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++;
 			continue;
 		}
-		// ’˝Œƒ
+		// Ê≠£Êñá
 		if (!curr.empty()) {
 			if (prev && prev->empty()) {
 				if (!BlockText.empty()) {
@@ -132,7 +133,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 			ins++;
 			continue;
 		}
-		// ø’––
+		// Á©∫Ë°å
 		BlockText.push_back(curr);
 		ins++;
 	}
@@ -141,54 +142,77 @@ void Markdown_Parser::split(const std::string& RawText) {
 	}
 }
 
-std::vector<Markdown_InlineElement> Markdown_Parser::inline_parse(const std::string& RawText, std::string& ResText, size_t begin_ins, size_t end_ins) {
-	std::string BufText;
-	std::vector<Markdown_InlineElement> ResElem;
-	std::vector<std::tuple<size_t, size_t, std::string>> TextSegments;
+std::vector<Markdown_InlineElement> Markdown_Parser::inline_parse(const std::string& RawText, std::string& ResText) {
+	std::string BufText = "";
 	ResText = "";
-	size_t ins = begin_ins;
-	size_t space_count = 0;
-	while (ins <= end_ins) {
-		if (RawText[ins] == ' ') {
-			space_count++;
-			if (space_count <= 1) { BufText += RawText[ins]; }
+	std::vector<Markdown_InlineElement> ResElem;
+	
+	bool space = false;
+	for (size_t i = 0; i < RawText.size(); i++) {
+		std::string token(1, RawText[i]);
+		if (BufText.empty() && token == " ") { continue; }
+		if (token == " ") {
+			if (!space) { space = true; }
+			continue;
 		}
-		else { space_count = 0; BufText += RawText[ins]; }
+		if (token != " ") {
+			if (space) { BufText += " "; space = false; }
+			BufText += token;
+		}
+	}
+
+	bool Bold_flag = false;
+	bool Italic_flag = false;
+	bool Code_flag = false;
+	size_t begin = 0;
+	size_t i = 0;
+	size_t ins = 0;
+
+	while (i < BufText.size()) {
+		std::string token(1, BufText[i]);
+		if (token == "`" || Code_flag) {
+			if (token == "`" && (!Code_flag)) {
+				Code_flag = true;
+				begin = ins;
+				i++;
+				continue;
+			}
+			if (token == "`" && Code_flag) {
+				Code_flag = false;
+				ResElem.push_back(Markdown_InlineElement(InlineType::Code, begin, ins - 1));
+				i++;
+				continue;
+			}
+		}
+
+		if ((token == "*" || Bold_flag || Italic_flag) && !Code_flag) {
+			if (token == "*" && (!Bold_flag) && (!Italic_flag)) {
+				std::string token_next(1, BufText[i + 1]);
+				if (token_next != "*") {
+					Italic_flag = true;
+					begin = ins;
+					i++; continue;
+				}
+				else {
+					Bold_flag = true;
+					begin = ins;
+					i += 2; continue;
+				}
+			}
+			if(token == "*" && Bold_flag && !Italic_flag) {
+				Bold_flag = false;
+				ResElem.push_back(Markdown_InlineElement(InlineType::Bold, begin, ins - 1));
+				i += 2; continue;
+			}
+			if(token == "*" && Italic_flag && !Bold_flag) {
+				Italic_flag = false;
+				ResElem.push_back(Markdown_InlineElement(InlineType::Italic, begin, ins - 1));
+				i++; continue;
+			}
+		}
+		ResText += token;
+		i++;
 		ins++;
-	}
-	std::vector<std::pair<InlineType, std::regex>> patterns = {
-		{InlineType::BoldItalic, std::regex(R"(\*\*\*(.+?)\*\*\*)")},
-		{InlineType::Bold,       std::regex(R"(\*\*(.+?)\*\*)")},
-		{InlineType::Italic,     std::regex(R"(\*(?!\*)(.+?)\*)")},
-		{InlineType::Code,       std::regex(R"(`(.+?)`)")}
-	};
-	for (const auto& [type, pattern] : patterns) {
-		for (auto buf = std::sregex_iterator(BufText.begin(), BufText.end(), pattern); buf != std::sregex_iterator(); buf++) {
-			std::smatch match = *buf;
-			ResElem.push_back(Markdown_InlineElement(type, 
-												     static_cast<size_t>(match.position()), 
-													 static_cast<size_t>(match.position() + match.length() - 1)));
-			TextSegments.push_back({ static_cast<size_t>(match.position()),
-									 static_cast<size_t>(match.position() + match.length() - 1),
-									 match[1].str() });
-		}
-	}
-	std::sort(TextSegments.begin(), TextSegments.end(), [](const auto& a, const auto& b) {
-		return std::get<0>(a) < std::get<0>(b);
-	});
-	std::sort(ResElem.begin(), ResElem.end(), [](const Markdown_InlineElement& a, const Markdown_InlineElement& b) {
-		return a.getBegin() < b.getBegin();
-	});
-	size_t curr = 0;
-	for (const auto& [start, end, inner] : TextSegments) {
-		if (start > curr) {
-			ResText += BufText.substr(curr, start - curr);
-		}
-		ResText += inner;
-		curr = end;
-	}
-	if (curr < BufText.size()) {
-		ResText += BufText.substr(curr);
 	}
 	return ResElem;
 }

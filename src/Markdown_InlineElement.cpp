@@ -1,4 +1,4 @@
-// Markdown_InlineElement.cpp£ºĞĞÄÚÔªËØÓï·¨ÊµÏÖ
+ï»¿// Markdown_InlineElement.cppï¼šè¡Œå†…å…ƒç´ è¯­æ³•å®ç°
 
 #include "Markdown_InlineElement.h"
 

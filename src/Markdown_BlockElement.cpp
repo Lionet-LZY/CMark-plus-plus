@@ -1,4 +1,4 @@
-// Markdown_BlockElement.cpp£º¿éÔªËØÓï·¨ÊµÏÖ
+ï»¿// Markdown_BlockElement.cppï¼šå—å…ƒç´ è¯­æ³•å®ç°
 
 #include "Markdown_BlockElement.h"
 
