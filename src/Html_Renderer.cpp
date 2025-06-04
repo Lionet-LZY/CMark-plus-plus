@@ -1,57 +1,142 @@
-﻿/*//打入html标签实现
+﻿// html 标签渲染实现
 
 #include "Html_Renderer.h"
+#include <math.h>
 
-std::string html::codetype(Markdown_BlockElement a) {
-	std::string ctype, text;
-	text = a.getText();
-	for (size_t i = 0;; i++) {
-		if (text[i] == '\r') { break; }
-		ctype[i] = text[i];
-	}
-	return ctype;
+void Html_Renderer::SetStyle(std::string filename) {
+	Style_css = filename;
 }
 
-void html::input_htext(Markdown_BlockElement a) {
-	if (a.getType() == BlockType::Headinglevel1) {
-		htext = "<h1>" + a.getText() + "</h1>";
-	}
-	else if (a.getType() == BlockType::Headinglevel2) {
-		htext = "<h2>" + a.getText() + "</h2>";
-	}
-	else if (a.getType() == BlockType::Headinglevel3) {
-		htext = "<h3>" + a.getText() + "</h3>";
-	}
-	else if (a.getType() == BlockType::Paragraph) {
-		htext = "<p>" + a.getText() + "</p>";
-	}
-	else if (a.getType() == BlockType::HorizontalRules) {
-		htext = "<hr>" + a.getText() + "</hr>";
-	}
-	else if (a.getType() == BlockType::CodeBlocks) {
-		if (codetype(a) == "'''cpp" || codetype(a) == "'''c++") {
-			htext = "<pre class=\"language - cpp\"><code>" + a.getText() + "</code></pre>";
+void Html_Renderer::BlockHtml(Markdown_BlockElement BlockElem) {
+	switch (BlockElem.getType()) {
+		case BlockType::Headinglevel1: {
+			HtmlText += "<h1>" + InlineHtml(BlockElem.getText()[0]) + "</h1>\n";
+			break;
 		}
-		else if (codetype(a) == "'''python" || codetype(a) == "'''py") {
-			htext = "<pre class=\"language - python\"><code>" + a.getText() + "</code></pre>";
+		case BlockType::Headinglevel2: {
+			HtmlText += "<h2>" + InlineHtml(BlockElem.getText()[0]) + "</h2>\n";
+			break;
 		}
-		else if (codetype(a) == "'''c") {
-			htext = "<pre class=\"language - c\"><code>" + a.getText() + "</code></pre>";
+		case BlockType::Headinglevel3: {
+			HtmlText += "<h3>" + InlineHtml(BlockElem.getText()[0]) + "</h3>\n";
+			break;
 		}
-		else if (codetype(a) == "'''java") {
-			htext = "<pre class=\"language - java\"><code>" + a.getText() + "</code></pre>";
+		case BlockType::Paragraph: {
+			HtmlText += "<p>" + InlineHtml(BlockElem.getText()[0]) + "</p>\n";
+			break;
 		}
-		else {
-			htext = "<pre class=\"language - text\"><code>" + a.getText() + "</code></pre>";
+		case BlockType::HorizontalRules: {
+			HtmlText += "<hr>\n";
+			break;
+		}
+		case BlockType::CodeBlocks: {
+			HtmlText += "<pre><code class=\"language-" + BlockElem.getText()[0].text + "\">";
+			for (size_t i = 1; i < BlockElem.getText().size(); i++) {
+				HtmlText += BlockElem.getText()[i].text + "\n";
+			}
+			HtmlText += "</code></pre>\n";
+			break;
+		}
+		case BlockType::BlockQuote: {
+			HtmlText += "<blockquote>\n";
+			for(size_t i = 0; i < BlockElem.getText().size(); i++) {
+				if (!BlockElem.getText()[i].text.empty()) {
+					HtmlText += "\t<p>" + InlineHtml(BlockElem.getText()[i]) + "</p>\n";
+				}
+			}
+			HtmlText += "</blockquote>\n";
+			break;
+		}
+		case BlockType::UnorderedList: {
+			HtmlText += "<ul>\n";
+			for (size_t i = 0; i < BlockElem.getText().size(); i++) {
+				if (!BlockElem.getText()[i].text.empty()) {
+					HtmlText += "\t<li>" + InlineHtml(BlockElem.getText()[i]) + "</li>\n";
+				}
+			}
+			HtmlText += "</ul>\n";
+			break;
+		}
+		case BlockType::OrderedList: {
+			HtmlText += "<ol>\n";
+			for (size_t i = 0; i < BlockElem.getText().size(); i++) {
+				if (!BlockElem.getText()[i].text.empty()) {
+					HtmlText += "\t<li>" + InlineHtml(BlockElem.getText()[i]) + "</li>\n";
+				}
+			}
+			HtmlText += "</ol>\n";
+			break;
 		}
 	}
-	else if (a.getType() == BlockType::OrderedList) {
-		htext = "<ol>" + a.getText() + "</ol>";
+}
+
+std::string Html_Renderer::InlineHtml(LineElement Line) {
+	std::vector<size_t> ins;
+	std::string res = "";
+	for (size_t i = 0; i < Line.InlineElement.size(); i++) {
+		ins.push_back(Line.InlineElement[i].getBegin());
+		ins.push_back(Line.InlineElement[i].getEnd());
 	}
-	else if (a.getType() == BlockType::UnorderedList) {
-		htext = "<ul>" + a.getText() + "</ul>";
+	for (size_t i = 0; i < Line.text.size(); i++) {
+		for (size_t j = 0; j < ins.size(); j++) {
+			if (ins[j] == i && (j % 2 == 0)) {
+				switch (Line.InlineElement[j / 2].getType()) {
+					case InlineType::Bold: {
+						res += "<strong>";
+						break;
+					}
+					case InlineType::Italic: {
+						res += "<em>";
+						break;
+					}
+					case InlineType::Code: {
+						res += "<code>";
+						break;
+					}
+				}
+			}
+			else if (ins[j] == i && (j % 2 == 1)) {
+				switch (Line.InlineElement[(j - 1) / 2].getType()) {
+				case InlineType::Bold: {
+					res += "</strong>";
+					break;
+				}
+				case InlineType::Italic: {
+					res += "</em>";
+					break;
+				}
+				case InlineType::Code: {
+					res += "</code>";
+				}
+				}
+			}
+		}
+		res += Line.text[i];
 	}
-	else if (a.getType() == BlockType::BlockQuote) {
-		htext = "<blockquote>" + a.getText() + "</blockquote>";
-	}
-}*/
+	return res;
+}
+
+std::string Html_Renderer::getHtml() const {
+	return HtmlText;
+}
+
+void Html_Renderer::Init() {
+	HtmlText += "<!DOCTYPE html>\n";
+	HtmlText += "<html lang=\"en\">\n";
+	HtmlText += "<head>\n";
+	HtmlText += "  <meta charset=\"UTF-8\" />\n";
+	HtmlText += "  <title> CMark++ </title>\n";
+	HtmlText += "  <link rel=\"stylesheet\" href=\"";
+	HtmlText += Style_css;
+	HtmlText += "\" />\n";
+	HtmlText += "  <link rel=\"stylesheet\" href=\"github-dark.min.css\" />\n";
+	HtmlText += "</head>\n\n";
+	HtmlText += "<body>\n";
+}
+
+void Html_Renderer::Tail() {
+	HtmlText += "<script src=\"highlight.min.js\"></script>\n";
+	HtmlText += "<script>hljs.highlightAll();</script>\n";
+	HtmlText += "</body>\n";
+	HtmlText += "</html>\n";
+}

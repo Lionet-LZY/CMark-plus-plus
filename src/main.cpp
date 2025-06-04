@@ -18,21 +18,35 @@ int main(int argc, char *argv[])
 #include <filesystem>
 #include "Markdown_Parser.h"
 #include "Markdown_InlineElement.h"
+#include "Html_Renderer.h"
 
 int main()
 {
-    std::ifstream file("resources/test.md");
-    if (!file.is_open()) {
+    std::ifstream ifile("resources/test.md");
+    if (!ifile.is_open()) {
         std::cerr << "Failed to open: resources/test.md" << std::endl;
         return 1;
     }
     std::ostringstream oss;
-    oss << file.rdbuf();
+    oss << ifile.rdbuf();
     std::string md_text = oss.str();
     Markdown_Parser parser;
     std::vector<Markdown_BlockElement> blocks;
     parser.block_parse(md_text, blocks);
+    Html_Renderer html;
+    html.SetStyle("style.css");
+    html.Init();
     for (size_t i = 0; i < blocks.size(); i++) {
+        html.BlockHtml(blocks[i]);
+    }
+    html.Tail();
+    std::ofstream ofile("resources/test.html");
+    if (!ofile.is_open()) {
+        std::cerr << "Failed to open: resources/test.html" << std::endl;
+        return 1;
+    }
+    ofile << html.getHtml();
+    /*for (size_t i = 0; i < blocks.size(); i++) {
 		std::cout << "Block #" << i << "  ";
         switch (blocks[i].getType()) {
             case BlockType::Paragraph:
@@ -65,9 +79,20 @@ int main()
         }
         for (size_t j = 0; j < blocks[i].getText().size(); j++) {
 			std::cout << "  Line " << j << '\t' << blocks[i].getText()[j].text << '\n';
+            for(size_t k = 0; k < blocks[i].getText()[j].InlineElement.size(); k++) {
+                std::string type_str;
+                switch (blocks[i].getText()[j].InlineElement[k].getType()) {
+                    case InlineType::Bold:   type_str = "Bold"; break;
+                    case InlineType::Italic: type_str = "Italic"; break;
+                    case InlineType::Code:   type_str = "Code"; break;
+                }
+                std::cout << "\tInline Element: " << type_str 
+                          << " [" << blocks[i].getText()[j].InlineElement[k].getBegin()
+                          << ", " << blocks[i].getText()[j].InlineElement[k].getEnd() << "]\n";
+			}
         }
     }
-    /*
+    
     parser.split(md_text);
     for (int i = 0; i < parser.RawBlock.size(); i++) {
         std::cout << "Block #" << i << '\n';

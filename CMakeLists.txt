@@ -15,7 +15,14 @@ qt_standard_project_setup()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-configure_file(resources/test.md ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources/test.md COPYONLY)
+
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources)
+file(GLOB RESOURCE_FILES
+    "${CMAKE_SOURCE_DIR}/resources/*.*"
+)
+foreach(RESOURCE_FILE ${RESOURCE_FILES})
+    configure_file(${RESOURCE_FILE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources/ COPYONLY)
+endforeach()
 
 set(PROJECT_SOURCE_DIR
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp

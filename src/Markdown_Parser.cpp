@@ -179,7 +179,7 @@ std::vector<Markdown_InlineElement> Markdown_Parser::inline_parse(const std::str
 			}
 			if (token == "`" && Code_flag) {
 				Code_flag = false;
-				ResElem.push_back(Markdown_InlineElement(InlineType::Code, begin, ins - 1));
+				ResElem.push_back(Markdown_InlineElement(InlineType::Code, begin, ins));
 				i++;
 				continue;
 			}
@@ -201,12 +201,12 @@ std::vector<Markdown_InlineElement> Markdown_Parser::inline_parse(const std::str
 			}
 			if(token == "*" && Bold_flag && !Italic_flag) {
 				Bold_flag = false;
-				ResElem.push_back(Markdown_InlineElement(InlineType::Bold, begin, ins - 1));
+				ResElem.push_back(Markdown_InlineElement(InlineType::Bold, begin, ins));
 				i += 2; continue;
 			}
 			if(token == "*" && Italic_flag && !Bold_flag) {
 				Italic_flag = false;
-				ResElem.push_back(Markdown_InlineElement(InlineType::Italic, begin, ins - 1));
+				ResElem.push_back(Markdown_InlineElement(InlineType::Italic, begin, ins));
 				i++; continue;
 			}
 		}

@@ -13,3 +13,6 @@ InlineType Markdown_InlineElement::getType() const {
 size_t Markdown_InlineElement::getBegin() const { 
 	return begin; 
 }
+size_t Markdown_InlineElement::getEnd() const {
+	return end;
+}
