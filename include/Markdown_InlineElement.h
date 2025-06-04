@@ -6,7 +6,8 @@
 enum class InlineType {
 	Bold,
 	Italic,
-	Code
+	Code,
+	Null
 };
 
 class Markdown_InlineElement {
@@ -15,6 +16,7 @@ private:
 	size_t begin;
 	size_t end;
 public:
+	Markdown_InlineElement();
 	Markdown_InlineElement(InlineType T, size_t b, size_t e);
 	InlineType getType() const;
 	size_t getBegin() const;

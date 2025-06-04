@@ -1,4 +1,4 @@
-﻿//打入html标签实现
+﻿/*//打入html标签实现
 
 #include "Html_Renderer.h"
 
@@ -54,4 +54,4 @@ void html::input_htext(Markdown_BlockElement a) {
 	else if (a.getType() == BlockType::BlockQuote) {
 		htext = "<blockquote>" + a.getText() + "</blockquote>";
 	}
-}
+}*/

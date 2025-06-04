@@ -1,4 +1,4 @@
-﻿//打入html标签定义
+﻿/*//打入html标签定义
 #pragma once
 
 #include <string>
@@ -12,4 +12,4 @@ public:
 	void input_htext(Markdown_BlockElement a);
 	//判断代码语言类型
 	std::string codetype(Markdown_BlockElement a);
-};
+};*/

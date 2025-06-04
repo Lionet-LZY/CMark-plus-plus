@@ -18,13 +18,19 @@ enum class BlockType {
 	UnorderedList
 };
 
+struct LineElement {
+	std::string text;
+	std::vector<Markdown_InlineElement> InlineElement;
+	LineElement(std::string t) : text(t) {}
+	LineElement(std::string t, std::vector<Markdown_InlineElement> I) : text(t), InlineElement(I) {}
+};
+
 class Markdown_BlockElement {
 private:
 	BlockType type;
-	std::string text;
-	std::vector<Markdown_InlineElement> InlineElement;
+	std::vector<LineElement> Text;
 public:
-	Markdown_BlockElement(BlockType T, const std::string& t, std::vector<Markdown_InlineElement> InlElem);
+	Markdown_BlockElement(BlockType t, std::vector<LineElement>T);
 	BlockType getType() const;
-	const std::string& getText() const;
+	std::vector<LineElement> getText() const;
 };

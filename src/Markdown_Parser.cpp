@@ -27,7 +27,7 @@ void Markdown_Parser::split(const std::string& RawText) {
 		const std::string* prev = (ins > 0) ? &RawLine[ins - 1] : nullptr;
 		const std::string& curr = RawLine[ins];
 		const std::string* next = (ins + 1 < RawLine.size()) ? &RawLine[ins + 1] : nullptr;
-		std::cout << "test\t" << curr << '\n';
+		// std::cout << "test\t" << curr << '\n';
 		if (curr.empty()) {
 			BlockText.push_back(curr);
 			ins++;
@@ -215,4 +215,96 @@ std::vector<Markdown_InlineElement> Markdown_Parser::inline_parse(const std::str
 		ins++;
 	}
 	return ResElem;
+}
+
+void Markdown_Parser::block_parse(const std::string& RawText, std::vector<Markdown_BlockElement>& BlockElem) {
+	split(RawText);
+	std::vector<Markdown_BlockElement> ResElem;
+	for (size_t i = 0; i < RawBlock.size(); i++) {
+		BlockType type;
+		std::string token = RawBlock[i][0].substr(0, 3);
+		if (token == "```") {
+			type = BlockType::CodeBlocks;
+			std::vector<LineElement> Lines;
+			Lines.push_back(LineElement(RawBlock[i][0].substr(3)));
+			for (size_t j = 1; j < RawBlock[i].size() - 1; j++) {
+				Lines.push_back(LineElement(RawBlock[i][j]));
+			}
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (token.size() >= 2 && token[0] == '1' && token[1] == '.') {
+			type = BlockType::OrderedList;
+			std::vector<LineElement> Lines;
+			for (const auto& line : RawBlock[i]) {
+				std::string pure_text;
+				if (line.size() >= 2) {
+					std::vector<Markdown_InlineElement> InlineElem = inline_parse(line.substr(2), pure_text);
+					Lines.push_back(LineElement(pure_text, InlineElem));
+				}
+			}
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (token.size() >= 2 && token.substr(0, 2) == "- ") {
+			type = BlockType::UnorderedList;
+			std::vector<LineElement> Lines;
+			for (const auto& line : RawBlock[i]) {
+				std::string pure_text;
+				if (line.size() >= 2) {
+					std::vector<Markdown_InlineElement> InlineElem = inline_parse(line.substr(2), pure_text);
+					Lines.push_back(LineElement(pure_text, InlineElem));
+				}
+			}
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (token.size() >= 2 && token[0] == '>' && token[1] == ' ') {
+			type = BlockType::BlockQuote;
+			std::vector<LineElement> Lines;
+			for (const auto& line : RawBlock[i]) {
+				std::string pure_text;
+				if (line.size() >= 2) {
+					std::vector<Markdown_InlineElement> InlineElem = inline_parse(line.substr(2), pure_text);
+					Lines.push_back(LineElement(pure_text, InlineElem));
+				}
+			}
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (token == "###") {
+			type = BlockType::Headinglevel3;
+			std::vector<LineElement> Lines;
+			std::string pure_text;
+			std::vector<Markdown_InlineElement> InlineElem = inline_parse(RawBlock[i][0].substr(4), pure_text);
+			Lines.push_back(LineElement(pure_text, InlineElem));
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (token == "## ") {
+			type = BlockType::Headinglevel2;
+			std::vector<LineElement> Lines;
+			std::string pure_text;
+			std::vector<Markdown_InlineElement> InlineElem = inline_parse(RawBlock[i][0].substr(3), pure_text);
+			Lines.push_back(LineElement(pure_text, InlineElem));
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (token.size() >= 1 && token[0] == '#') {
+			type = BlockType::Headinglevel1;
+			std::vector<LineElement> Lines;
+			std::string pure_text;
+			std::vector<Markdown_InlineElement> InlineElem = inline_parse(RawBlock[i][0].substr(2), pure_text);
+			Lines.push_back(LineElement(pure_text, InlineElem));
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (token == "---") {
+			type = BlockType::HorizontalRules;
+			std::vector<LineElement> Lines;
+			Lines.push_back(LineElement(""));
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+		else if (!token.empty()) {
+			type = BlockType::Paragraph;
+			std::vector<LineElement> Lines;
+			std::string pure_text;
+			std::vector<Markdown_InlineElement> InlineElem = inline_parse(RawBlock[i][0], pure_text);
+			Lines.push_back(LineElement(pure_text, InlineElem));
+			BlockElem.push_back(Markdown_BlockElement(type, Lines));
+		}
+	}
 }

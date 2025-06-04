@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 int main()
 {
-    /*std::ifstream file("resources/test.md");
+    std::ifstream file("resources/test.md");
     if (!file.is_open()) {
         std::cerr << "Failed to open: resources/test.md" << std::endl;
         return 1;
@@ -30,13 +30,51 @@ int main()
     oss << file.rdbuf();
     std::string md_text = oss.str();
     Markdown_Parser parser;
+    std::vector<Markdown_BlockElement> blocks;
+    parser.block_parse(md_text, blocks);
+    for (size_t i = 0; i < blocks.size(); i++) {
+		std::cout << "Block #" << i << "  ";
+        switch (blocks[i].getType()) {
+            case BlockType::Paragraph:
+                std::cout << "Paragraph: \n";
+                break;
+            case BlockType::Headinglevel1:
+                std::cout << "Head 1: \n";
+                break;
+            case BlockType::Headinglevel2:
+                std::cout << "Head 2: \n";
+                break;
+            case BlockType::Headinglevel3:
+                std::cout << "Head 3: \n";
+                break;
+            case BlockType::BlockQuote:
+                std::cout << "Quote: \n";
+                break;
+            case BlockType::CodeBlocks:
+                std::cout << "Code: \n";
+                break;
+            case BlockType::HorizontalRules:
+                std::cout << "HorizontalRules\n";
+                break;
+            case BlockType::OrderedList:
+                std::cout << "Ordered List: \n";
+				break;
+            case BlockType::UnorderedList:
+                std::cout << "Unordered List: \n";
+                break;
+        }
+        for (size_t j = 0; j < blocks[i].getText().size(); j++) {
+			std::cout << "  Line " << j << '\t' << blocks[i].getText()[j].text << '\n';
+        }
+    }
+    /*
     parser.split(md_text);
     for (int i = 0; i < parser.RawBlock.size(); i++) {
         std::cout << "Block #" << i << '\n';
         for (int j = 0; j < parser.RawBlock[i].size(); j++) {
             std::cout << "\tLine " << j << '\t' << parser.RawBlock[i][j] << '\n';
         }
-    }*/
+    }
     Markdown_Parser parser;
     std::string raw = "  **bold**,      *Ita   lic* and `code`.";
     std::string resultText;
@@ -53,5 +91,5 @@ int main()
         case InlineType::Code:       type_str = "Code"; break;
         }
         std::cout << type_str << " [" << elem.getBegin() << ", " << elem.getEnd() << "]\n";
-    }
+    }*/
 }
