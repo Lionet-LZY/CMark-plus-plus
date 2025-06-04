@@ -1,24 +1,29 @@
-# SEU
-## 615247
-### Lionet and Baobao
+# Heading level 1
+## Heading level 2
+### Heading level 3
 
-This is Baobao. She is cute.
+I really like using Markdown.
+I think I'll use it to format all of my documents from now on.
 
-- Baobao win first
-- Baobao win second
-- Baobao win third
+These are **bold**, *italic*, and `code`.
 
-1. Lionet is very good.
-3. Baobao is very good.
+> With four parameters I can fit an elephant, and with five I can make him wiggle his trunk. - John von Neumann
+> Sometimes it's the very people who no one imagines anything of who do the things no one can imagine. - Alan Mathison Turing
 
-> Baobao said, Lionet is good!
-> Lionet said, Baobao is good!
+1. First item
+2. Second item
+1. Third item
 
-```python
-print("Lionet loves Baobao")
-print("Baobao loves Lionet")
-```
+- First item
+- Second item
+- Third item
 
 ---
 
-   These  are **Lionet**, *Duck* and `Zhiliao`.
+```cpp
+#include <iostream>
+int main() {
+	std::cout << "Hello, CMark++!" << std::endl;
+	return 0;
+}
+```
